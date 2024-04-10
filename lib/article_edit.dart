@@ -9,19 +9,27 @@ class ArticleEditPage extends StatefulWidget {
 }
 
 class _ArticleEditPageState extends State<ArticleEditPage> {
+
+  String _title = "";
   String _text = "";
 
   @override
   void initState() {
     super.initState();
+    _title = widget.text;
     _text = widget.text;
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = TextEditingController(text: _text);
-    controller.selection = TextSelection.fromPosition(
-      TextPosition(offset: controller.text.length),
+    TextEditingController titleController = TextEditingController(text: _title);
+    titleController.selection = TextSelection.fromPosition(
+      TextPosition(offset: titleController.text.length),
+    );
+
+    TextEditingController textController = TextEditingController(text: _text);
+    textController.selection = TextSelection.fromPosition(
+      TextPosition(offset: textController.text.length)
     );
 
     return Scaffold(
@@ -29,42 +37,66 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
         title: Text('ArticleEdit'),
       ),
       body: Container(
-        padding: EdgeInsets.all(64),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(_text, style: TextStyle(color: Colors.brown[300])),
-            const SizedBox(height: 8),
-            TextField(
-              controller: controller,
-              onChanged: (String value) {
-                setState(() {
-                  _text = value;
-                });
-              },
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              // Editボタン
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(_text);
+        padding: EdgeInsets.all(60),
+        child: Container(
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: <Widget>[
+              TextField(
+                maxLength: 15,
+                enabled: true,
+                maxLines: 1,
+                decoration: InputDecoration(
+                  hintText: "Title"
+                ),
+                controller: titleController,
+                onChanged: (String value) {
+                  setState(() {
+                    _title = value;
+                  });
                 },
-                child: Text("Edit"),
               ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("Cancel"),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: TextField(
+                  maxLength: 2048,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: "Text"
+                  ),
+                  controller: textController,
+                  onChanged: (String value){
+                    setState(() {
+                      _text = value;
+                    });
+                  },
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 50),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop({"title": _title,"text": _text});
+                    print(_title);
+                    print(_text);
+                  },
+                  child: Text("Save"),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Cancel"),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

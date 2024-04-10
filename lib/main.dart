@@ -21,8 +21,9 @@ class MyApp extends StatelessWidget{
     return MaterialApp(
       title: "Media App",
       theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey.shade100),
+        colorScheme: ColorScheme.light(
+        primary: Colors.blueGrey.shade300
+        )
       ),
       home: articleListPage(),
     );
@@ -36,7 +37,8 @@ class articleListPage extends StatefulWidget{
 
 class _articleListPageState extends State<articleListPage>{
 
-  List<String> articleList = [];
+  List<String> articleTitleList = [];
+  List<String> articleTextList = [];
 
   @override
   void initState(){
@@ -46,7 +48,8 @@ class _articleListPageState extends State<articleListPage>{
 
   void init() async{
     final prefs = await SharedPreferences.getInstance();
-    articleList = prefs.getStringList("articleList")??[];
+    articleTitleList = prefs.getStringList("articleTitleList")??[];
+    articleTextList = prefs.getStringList("articleTextList")??[];
     setState(() {});
   }
 
@@ -56,105 +59,141 @@ class _articleListPageState extends State<articleListPage>{
         appBar: AppBar(
           title: Text("ArticleList"),
         ),
-        body: ListView.builder(
-            itemCount: articleList.length,
-            itemBuilder: (context, index){
-              return Slidable(
-                startActionPane: ActionPane(
-                  motion: const ScrollMotion(),
-                  extentRatio: 0.25,
-                  children: [
-                    SlidableAction(onPressed: (context) async{
-                      final prefs = await SharedPreferences.getInstance();
-                      setState(() {
-                        articleList.removeAt(index);
-                      });
-                    },
-                        icon: Icons.delete
-                    )
-                  ],
-                ),
-                endActionPane: ActionPane(
-                  motion: const ScrollMotion(),
-                  extentRatio: 0.15,
-                  children: [
-                    SlidableAction(onPressed: (context) async{
-                      final prefs = await SharedPreferences.getInstance();
-                      final editText = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticleEditPage(articleList[index])),
-                      );
-                      if(editText != null){
-                        setState(() {
-                          articleList[index] = editText;
-                        });
-                      }
-                      prefs.setStringList("articleList", articleList);
-                    },
-                      icon: Icons.edit,
+        body: Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child:
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: ElevatedButton.icon(
+                    onPressed: (){},
+                    icon: Icon(Icons.favorite),
+                    label: Text("List"),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(200, 50)
                     ),
-                  ],
-                ),
-
-                child: SizedBox(
-                  height: 120,
-                  child: Card(
-                    child: InkWell(
-                      customBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0)
-                      ),
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: ListTile(
-                          title: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: Image.asset('assets/015_l.jpg',
-                                  height: 100,
-                                  width: 130,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20, top: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("hello", style: TextStyle(fontSize: 23, color: Colors.blueGrey.shade900),),
-                                    Text("subsubsubsubsubs...", style: TextStyle(fontSize: 20,color: Colors.blueGrey.shade400),)
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          //articleList[index]),
-                          onTap: (){
-                          },
-                          ),
-                      ),
-                    )
                   ),
                 ),
-              );
-            }
+                Flexible(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: articleTitleList.length,
+                    itemBuilder: (context, index){
+                      return Slidable(
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: 0.25,
+                          children: [
+                            SlidableAction(onPressed: (context) async{
+                              final prefs = await SharedPreferences.getInstance();
+                              setState(() {
+                                articleTitleList.removeAt(index);
+                                articleTextList.removeAt(index);
+                              });
+                            },
+                                icon: Icons.delete
+                            )
+                          ],
+                        ),
+                        endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: 0.15,
+                          children: [
+                            SlidableAction(onPressed: (context) async{
+                              final prefs = await SharedPreferences.getInstance();
+                              final editTitle = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticleEditPage(articleTitleList[index])),
+                              );
+                              final editText = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticleEditPage(articleTextList[index])));
+                              if(editTitle != null){
+                                setState(() {
+                                  articleTitleList[index] = editTitle;
+                                });
+                              }
+                              if(editText != null){
+                                setState(() {
+                                  articleTextList[index] = editText;
+                                });
+                              }
+                              prefs.setStringList("articleTitleList", articleTitleList);
+                              prefs.setStringList("articleTextList", articleTextList);
+                            },
+                              icon: Icons.edit,
+                            ),
+                          ],
+                        ),
+                  
+                        child: SizedBox(
+                          height: 120,
+                          child: Card(
+                            child: InkWell(
+                              customBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0)
+                              ),
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: ListTile(
+                                  title: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 16),
+                                        child: Image.asset('assets/015_l.jpg',
+                                          height: 100,
+                                          width: 130,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 20, top: 10),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(articleTitleList[index], style: TextStyle(fontSize: 23, color: Colors.blueGrey.shade900),),
+                                            Text(articleTextList[index], style: TextStyle(fontSize: 20,color: Colors.blueGrey.shade400),)
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  //articleList[index]),
+                                  onTap: (){
+                                  },
+                                  ),
+                              ),
+                            )
+                          ),
+                        ),
+                      );
+                    }
+                            ),
+                ),
+              ],
+            ),
         ),
 
         floatingActionButton: FloatingActionButton(
           onPressed: () async{
             final prefs = await SharedPreferences.getInstance();
-            final newListText = await Navigator.of(context).push(
+            final addData = await Navigator.of(context).push(
               MaterialPageRoute(builder: (context){
                 return ArticleAddPage();
               }),
             );
+            final newListText = "hello";
             if (newListText != null){
               setState(() {
-                articleList.add(newListText);
+                articleTitleList.add(newListText);
+                articleTextList.add(newListText);
               });
             }
-            prefs.setStringList("articleList", articleList);
+            prefs.setStringList("articleTitleList", articleTitleList);
+            prefs.setStringList("articleTextList", articleTextList);
           },
-          child: Icon(Icons.add),
-        )
+          child: Icon(
+            Icons.add
+          )
+        ),
+
     );
   }
 }
