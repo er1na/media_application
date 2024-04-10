@@ -8,6 +8,7 @@ import 'package:flutter/src/widgets/scroll_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'article_add.dart';
 import 'article_edit.dart';
+import 'article_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -162,8 +163,18 @@ class _articleListPageState extends State<articleListPage>{
                                       ),
                                     ],
                                   ),
+                                  trailing: Padding(
+                                    padding: const EdgeInsets.only(bottom: 15),
+                                    child: Icon(Icons.favorite_border,
+                                      color: Colors.blueGrey.shade500),
+                                  ),
                                   //articleList[index]),
-                                  onTap: (){
+                                  onTap: ()async{
+                                    final prefs = await SharedPreferences.getInstance();
+                                    final addData = await Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) {
+                                      return ArticlePage(false);
+                                     }));
                                   },
                                   ),
                               ),

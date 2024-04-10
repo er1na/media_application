@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class ArticleEditPage extends StatefulWidget {
 
   ArticleEditPage(this.data);
