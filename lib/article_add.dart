@@ -28,6 +28,7 @@ class _ArticleAddPageState extends State<ArticleAddPage>{
                 maxLines: 1,
                 decoration: InputDecoration(
                   hintText: "Title",
+                  hintStyle: TextStyle(color: Colors.blueGrey.shade200)
                 ),
                 onChanged: (value){
                   setState(() {
@@ -43,6 +44,7 @@ class _ArticleAddPageState extends State<ArticleAddPage>{
                   maxLines: null,
                   decoration: InputDecoration(
                     hintText: "Text",
+                    hintStyle: TextStyle(color: Colors.blueGrey.shade200)
                   ),
                   onChanged: (value){
                     setState(() {

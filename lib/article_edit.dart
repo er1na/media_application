@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 
 class ArticleEditPage extends StatefulWidget {
-  ArticleEditPage(this.text);
-  String text;
+
+  ArticleEditPage(this.data);
+  final Map<String, String> data;
   @override
   _ArticleEditPageState createState() => _ArticleEditPageState();
 }
@@ -16,8 +17,8 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
   @override
   void initState() {
     super.initState();
-    _title = widget.text;
-    _text = widget.text;
+    _title = widget.data['title']??'';
+    _text = widget.data['text']??'';
   }
 
   @override
@@ -47,7 +48,8 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
                 enabled: true,
                 maxLines: 1,
                 decoration: InputDecoration(
-                  hintText: "Title"
+                  hintText: "Title",
+                  hintStyle: TextStyle(color: Colors.blueGrey.shade200)
                 ),
                 controller: titleController,
                 onChanged: (String value) {
@@ -63,7 +65,8 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   decoration: InputDecoration(
-                    hintText: "Text"
+                    hintText: "Text",
+                    hintStyle: TextStyle(color: Colors.blueGrey.shade200)
                   ),
                   controller: textController,
                   onChanged: (String value){
@@ -79,8 +82,6 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop({"title": _title,"text": _text});
-                    print(_title);
-                    print(_text);
                   },
                   child: Text("Save"),
                 ),

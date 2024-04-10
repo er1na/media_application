@@ -102,19 +102,26 @@ class _articleListPageState extends State<articleListPage>{
                           children: [
                             SlidableAction(onPressed: (context) async{
                               final prefs = await SharedPreferences.getInstance();
-                              final editTitle = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticleEditPage(articleTitleList[index])),
-                              );
-                              final editText = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticleEditPage(articleTextList[index])));
-                              if(editTitle != null){
+                              final Map<String, String> editData;
+
+                              editData = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticleEditPage({'title': articleTitleList[index], 'text': articleTextList[index]})));
+
+                              if(editData['title'] != null){
                                 setState(() {
-                                  articleTitleList[index] = editTitle;
+                                  articleTitleList[index] = editData['title']??'';
                                 });
+                              }else{
+                                articleTitleList[index] = editData['title']??'';
                               }
-                              if(editText != null){
+
+                              if(editData['text'] != null){
                                 setState(() {
-                                  articleTextList[index] = editText;
+                                  articleTextList[index] = editData['text']??'';
                                 });
+                              }else{
+                                articleTextList[index] = editData['text']??'';
                               }
+
                               prefs.setStringList("articleTitleList", articleTitleList);
                               prefs.setStringList("articleTextList", articleTextList);
                             },
@@ -179,11 +186,15 @@ class _articleListPageState extends State<articleListPage>{
                 return ArticleAddPage();
               }),
             );
-            final newListText = "hello";
-            if (newListText != null){
+
+            if (addData['title'] != null){
               setState(() {
-                articleTitleList.add(newListText);
-                articleTextList.add(newListText);
+                articleTitleList.add(addData['title']);
+              });
+            }
+            if (addData['text'] != null){
+              setState(() {
+                articleTextList.add(addData['text']);
               });
             }
             prefs.setStringList("articleTitleList", articleTitleList);
