@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ArticlePage extends StatefulWidget{
@@ -15,6 +16,7 @@ class _ArticlePageState extends State<ArticlePage>{
 
   String _title = "";
   String _text = "";
+  bool _isFavorite = false;
 
   @override
   void initState(){
@@ -64,16 +66,32 @@ class _ArticlePageState extends State<ArticlePage>{
                                 padding: const EdgeInsets.only(bottom: 15),
                                 child: ElevatedButton.icon(
                                   style: ButtonStyle(
-                                    surfaceTintColor: MaterialStateProperty.all(Colors.white)
+                                    surfaceTintColor: MaterialStateProperty.all(
+                                      _isFavorite
+                                        ? Colors.blueGrey.shade300
+                                          : Colors.white
+                                    )
                                   ),
-                                  onPressed: (){},
-                                  icon: Icon(Icons.favorite_border),
+                                  onPressed: (){
+                                    setState(() {
+                                      _isFavorite = !_isFavorite;
+                                    });
+                                  },
+                                  icon: Icon(
+                                      _isFavorite
+                                        ? Icons.favorite
+                                          : Icons.favorite_border,
+                                  ),
                                   label: Text("Favorite"),
                                 ),
                               ),
                             ),
-                            Text(_text,
-                            style: TextStyle(fontSize: 20),),
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              child: Text(_text,
+                              style: TextStyle(fontSize: 20,      color: Colors.blueGrey.shade700),
+                              ),
+                            ),
                           ],
                         ),
                       ),
