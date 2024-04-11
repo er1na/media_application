@@ -4,24 +4,23 @@ import 'package:provider/provider.dart';
 
 class ArticlePage extends StatefulWidget{
 
-  ArticlePage(this.favoriteState);
-  final bool favoriteState;
-  //final Map<String, String> data;
+  ArticlePage(this.data);
+  final Map<String, String> data;
+  @override
   _ArticlePageState createState() => _ArticlePageState();
 
 }
 
 class _ArticlePageState extends State<ArticlePage>{
 
-  bool _favoriteState = false;
   String _title = "";
   String _text = "";
 
   @override
   void initState(){
     super.initState();
-    //_title = widget.data['title'];
-    //_text = widget.data['text'];
+    _title = widget.data['title']??'';
+    _text = widget.data['text']??'';
   }
 
   @override
@@ -43,7 +42,11 @@ class _ArticlePageState extends State<ArticlePage>{
                 SizedBox(
                   width: 400,
                   child: Card(
-                    child: Text("aaaaaaaaaaaaaaaaasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasa"),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(_title,
+                        style: TextStyle(fontSize: 23),),
+                    ),
                   ),
                 ),
                 Padding(
@@ -51,7 +54,29 @@ class _ArticlePageState extends State<ArticlePage>{
                   child: SizedBox(
                     width:  400,
                     child: Card(
-                      child: Text("aaaaasasassasasassasassasssassasasasassassasasasassasasasasassassasasasasassaasassasaasaaasasasasasassssaasasasasasasasasasa"),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:15, right:20, left:20, bottom: 20),
+                        child: Column(
+                          children: [
+                            Container(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 15),
+                                child: ElevatedButton.icon(
+                                  style: ButtonStyle(
+                                    surfaceTintColor: MaterialStateProperty.all(Colors.white)
+                                  ),
+                                  onPressed: (){},
+                                  icon: Icon(Icons.favorite_border),
+                                  label: Text("Favorite"),
+                                ),
+                              ),
+                            ),
+                            Text(_text,
+                            style: TextStyle(fontSize: 20),),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 )

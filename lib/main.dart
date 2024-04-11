@@ -171,10 +171,11 @@ class _articleListPageState extends State<articleListPage>{
                                   //articleList[index]),
                                   onTap: ()async{
                                     final prefs = await SharedPreferences.getInstance();
-                                    final addData = await Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) {
-                                      return ArticlePage(false);
-                                     }));
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (context) =>
+                                      ArticlePage({'title': articleTitleList[index], 'text': articleTextList[index]})
+                                      )
+                                    );
                                   },
                                   ),
                               ),
