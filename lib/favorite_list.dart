@@ -33,7 +33,11 @@ class _FavoriteListPageState extends State<FavoriteListPage>{
 
   @override
   Widget build(BuildContext context){
-
+    if (favoriteArticles.isEmpty) {
+      return Center(
+        child: Text("お気に入りの記事はありません"),
+      );
+    }
     return
       Scaffold(
       appBar: AppBar(
