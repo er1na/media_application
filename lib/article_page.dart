@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:media_application/main.dart';
 import 'package:provider/provider.dart';
+import 'favorite_model.dart';
 
 class ArticlePage extends StatefulWidget{
 
   ArticlePage(this.data);
   final Map<String, String> data;
+  //final String articleTitle;
   @override
   _ArticlePageState createState() => _ArticlePageState();
 
@@ -27,7 +30,7 @@ class _ArticlePageState extends State<ArticlePage>{
 
   @override
   Widget build(BuildContext context){
-    var favButtonState = context.watch<ArticlePage>;
+    var favoriteModel = Provider.of<FavoriteModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -76,6 +79,7 @@ class _ArticlePageState extends State<ArticlePage>{
                                     setState(() {
                                       _isFavorite = !_isFavorite;
                                     });
+                                    favoriteModel.toggleFavorite(_title, _text);
                                   },
                                   icon: Icon(
                                       _isFavorite
@@ -97,7 +101,28 @@ class _ArticlePageState extends State<ArticlePage>{
                       ),
                     ),
                   ),
-                )
+                ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: SizedBox(
+                  width: 130,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: (){
+                      Navigator.of(context).pop(_isFavorite);
+                    },
+                    child: Text("< Back",
+                      style: TextStyle(
+                          fontSize: 17),),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      surfaceTintColor: Colors.white,
+
+                    ),
+
+                  ),
+                ),
+              )
               ],
             ),
           ),
