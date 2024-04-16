@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ArticleAddPage extends StatefulWidget{
   @override
@@ -11,7 +12,7 @@ class _ArticleAddPageState extends State<ArticleAddPage>{
   String _text = "";
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context, ScopedReader watch){
     return Scaffold(
       appBar: AppBar(
         title: Text("ArticleAdd"),
@@ -58,7 +59,9 @@ class _ArticleAddPageState extends State<ArticleAddPage>{
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: (){
-                    Navigator.of(context).pop({'title': _title, 'text': _text});
+                    _title == "" && _text == ""
+                    ?Navigator.of(context).pop()
+                    :Navigator.of(context).pop({'title': _title, 'text': _text});
                   },
                   child: Text("Save"),
                 ),

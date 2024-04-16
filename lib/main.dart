@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
 import 'article_add.dart';
 import 'article_edit.dart';
 import 'article_page.dart';
 import 'favorite_list.dart';
-import 'favorite_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => FavoriteModel()),
-      ],
-      child: MyApp(),
-    ),
+      MyApp(),
   );
 }
 
@@ -37,26 +31,16 @@ class MyApp extends StatelessWidget{
 }
 
 class articleListPage extends StatefulWidget{
+
   @override
   _articleListPageState createState() => _articleListPageState();
-}
-
-class Favorite extends ChangeNotifier{
-  bool _isFavorite = false;
-
-  bool get isFavorite => _isFavorite;
-
-  void toggleFavorite(){
-    _isFavorite = !_isFavorite;
-    notifyListeners();
-  }
-
 }
 
 class _articleListPageState extends State<articleListPage>{
 
   List<String> articleTitleList = [];
   List<String> articleTextList = [];
+  List<String> favoriteTitleList =[];
   final bool _isFavorite = false;
 
   @override
@@ -67,17 +51,17 @@ class _articleListPageState extends State<articleListPage>{
 
   void init() async{
     final prefs = await SharedPreferences.getInstance();
+    //prefs.clear();
     articleTitleList = prefs.getStringList("articleTitleList")??[];
     articleTextList = prefs.getStringList("articleTextList")??[];
+    favoriteTitleList = prefs.getStringList("favoriteTitleList")??[];
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context){
 
-    return ChangeNotifierProvider(
-        create: (context) => FavoriteModel(),
-    child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text("ArticleList"),
         ),
@@ -90,7 +74,10 @@ class _articleListPageState extends State<articleListPage>{
                   padding: const EdgeInsets.only(bottom: 20),
                   child: ElevatedButton.icon(
                     onPressed: (){
-                      Navigator.of(context).pop(MaterialPageRoute(builder: (context) => FavoriteListPage()));
+                      Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) =>
+                      FavoriteListPage(),
+    ));
                     },
                     icon: Icon(Icons.favorite),
                     label: Text("List"),
@@ -155,7 +142,7 @@ class _articleListPageState extends State<articleListPage>{
                             ),
                           ],
                         ),
-                  
+
                         child: SizedBox(
                           height: 120,
                           child: Card(
@@ -190,7 +177,7 @@ class _articleListPageState extends State<articleListPage>{
                                   ),
                                   trailing: Padding(
                                     padding: const EdgeInsets.only(bottom: 15),
-                                    child: Icon(_isFavorite
+                                    child: Icon(favoriteTitleList.contains(articleTitleList[index])
                                         ? Icons.favorite
                                           : Icons.favorite_border,
                                       color: Colors.blueGrey.shade500),
@@ -200,7 +187,7 @@ class _articleListPageState extends State<articleListPage>{
                                     final prefs = await SharedPreferences.getInstance();
                                     Navigator.of(context).push(
                                       MaterialPageRoute(builder: (context) =>
-                                      ArticlePage({'title': articleTitleList[index], 'text': articleTextList[index]}),
+                                      ArticlePage({'title': articleTitleList[index], 'text': articleTextList[index]},),
                                       )
                                     );
                                   },
@@ -244,7 +231,6 @@ class _articleListPageState extends State<articleListPage>{
           )
         ),
 
-    )
     );
   }
 }

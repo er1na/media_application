@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ArticleEditPage extends StatefulWidget {
 
@@ -90,7 +91,7 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
                 width: double.infinity,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop({'title': _title, 'text': _text});
                   },
                   child: Text("Cancel"),
                 ),
