@@ -1,11 +1,15 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:file_picker/file_picker.dart';
 import 'article_add.dart';
 import 'article_edit.dart';
 import 'article_page.dart';
 import 'favorite_list.dart';
-import 'package:image_picker/image_picker.dart';
+import 'file_picker_controller.dart';
+import 'dart:io';
 
 void main() {
   runApp(
@@ -41,6 +45,7 @@ class _articleListPageState extends State<articleListPage>{
   List<String> articleTitleList = [];
   List<String> articleTextList = [];
   List<String> favoriteTitleList =[];
+  List<String> filePathList = [];
   final bool _isFavorite = false;
 
   @override
@@ -51,10 +56,11 @@ class _articleListPageState extends State<articleListPage>{
 
   void init() async{
     final prefs = await SharedPreferences.getInstance();
-    //prefs.clear();
+    prefs.clear();
     articleTitleList = prefs.getStringList("articleTitleList")??[];
     articleTextList = prefs.getStringList("articleTextList")??[];
     favoriteTitleList = prefs.getStringList("favoriteTitleList")??[];
+    filePathList = prefs.getStringList("filePathList")??[];
     setState(() {});
   }
 
@@ -101,9 +107,11 @@ class _articleListPageState extends State<articleListPage>{
                               setState(() {
                                 articleTitleList.removeAt(index);
                                 articleTextList.removeAt(index);
+                                filePathList.removeAt(index);
                               });
                               prefs.setStringList("articleTitleList", articleTitleList);
                               prefs.setStringList("articleTextList", articleTextList);
+                              prefs.setStringList("filePathList", filePathList);
                             },
                                 icon: Icons.delete
                             )
@@ -117,7 +125,7 @@ class _articleListPageState extends State<articleListPage>{
                               final prefs = await SharedPreferences.getInstance();
                               final Map<String, String> editData;
 
-                              editData = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticleEditPage({'title': articleTitleList[index], 'text': articleTextList[index]})));
+                              editData = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ArticleEditPage({'title': articleTitleList[index], 'text': articleTextList[index],'filePath': filePathList[index]})));
 
                               if(editData['title'] != null){
                                 setState(() {
@@ -135,8 +143,17 @@ class _articleListPageState extends State<articleListPage>{
                                 articleTextList[index] = editData['text']??'';
                               }
 
+                              if(editData['filePath'] != null){
+                                setState(() {
+                                  filePathList[index] = editData['filePath']??'';
+                                });
+                              }else{
+                                filePathList[index] = editData['filePath']??'';
+                              }
+
                               prefs.setStringList("articleTitleList", articleTitleList);
                               prefs.setStringList("articleTextList", articleTextList);
+                              prefs.setStringList("filePathList", filePathList);
                             },
                               icon: Icons.edit,
                             ),
@@ -157,10 +174,14 @@ class _articleListPageState extends State<articleListPage>{
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.only(bottom: 16),
-                                        child: Image.asset('assets/015_l.jpg',
+                                        child: SizedBox(
                                           height: 100,
-                                          width: 130,
-                                          fit: BoxFit.fill,
+                                          width:  130,
+                                          child: Image.file(File(filePathList[index]),
+                                            height: 100,
+                                            width: 130,
+                                            fit: BoxFit.fill,
+                                          ),
                                         ),
                                       ),
                                       Padding(
@@ -187,7 +208,7 @@ class _articleListPageState extends State<articleListPage>{
                                     final prefs = await SharedPreferences.getInstance();
                                     Navigator.of(context).push(
                                       MaterialPageRoute(builder: (context) =>
-                                      ArticlePage({'title': articleTitleList[index], 'text': articleTextList[index]},),
+                                      ArticlePage({'title': articleTitleList[index], 'text': articleTextList[index], 'filePath': filePathList[index]}),
                                       )
                                     );
                                   },
@@ -213,18 +234,16 @@ class _articleListPageState extends State<articleListPage>{
               }),
             );
 
-            if (addData['title'] != null){
+            if (addData['title'] != null && addData['text'] != null){
               setState(() {
                 articleTitleList.add(addData['title']);
-              });
-            }
-            if (addData['text'] != null){
-              setState(() {
                 articleTextList.add(addData['text']);
+                filePathList.add(addData['filePath']);
               });
             }
             prefs.setStringList("articleTitleList", articleTitleList);
             prefs.setStringList("articleTextList", articleTextList);
+            prefs.setStringList("filePathList", filePathList);
           },
           child: Icon(
             Icons.add

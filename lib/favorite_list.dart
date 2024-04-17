@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'article_page.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class FavoriteListPage extends StatefulWidget{
 
@@ -18,6 +19,7 @@ class _FavoriteListPageState extends State<FavoriteListPage>{
 
   List<String> favoriteTitleList = [];
   List<String> favoriteTextList = [];
+  List<String> favoriteFilePathList = [];
 
   @override
   void initState() {
@@ -29,6 +31,7 @@ class _FavoriteListPageState extends State<FavoriteListPage>{
     final prefs = await SharedPreferences.getInstance();
     favoriteTitleList = prefs.getStringList("favoriteTitleList")??[];
     favoriteTextList = prefs.getStringList("favoriteTextList")??[];
+    favoriteFilePathList = prefs.getStringList("favoriteFilePathList")??[];
     setState(() {});
   }
 
@@ -61,10 +64,14 @@ class _FavoriteListPageState extends State<FavoriteListPage>{
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.only(bottom: 16),
-                                      child: Image.asset('assets/015_l.jpg',
+                                      child: SizedBox(
                                         height: 100,
-                                        width: 130,
-                                        fit: BoxFit.fill,
+                                        width:  130,
+                                        child: Image.file(File(favoriteFilePathList[index]),
+                                          height: 100,
+                                          width: 130,
+                                          fit: BoxFit.fill,
+                                        ),
                                       ),
                                     ),
                                     Padding(
@@ -83,7 +90,8 @@ class _FavoriteListPageState extends State<FavoriteListPage>{
                                 onTap: (){
                                   Navigator.of(context).push(
                                       MaterialPageRoute(builder: (context) =>
-                                          ArticlePage({'title': favoriteTitleList[index], 'text': favoriteTextList[index]}),
+                                          ArticlePage({'title': favoriteTitleList[index], 'text': favoriteTextList[index],
+                                           'filePath': favoriteFilePathList[index]}),
                                       )
                                   );
                                 },

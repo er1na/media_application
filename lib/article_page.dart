@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class ArticlePage extends StatefulWidget{
 
@@ -18,8 +19,10 @@ class _ArticlePageState extends State<ArticlePage>{
 
   String _title = "";
   String _text = "";
+  String _filePath = "";
   List<String> favoriteTitleList = [];
   List<String> favoriteTextList = [];
+  List<String> favoriteFilePathList = [];
   Map<String, String> favoriteArticles = {};
   bool _isFavorite = false;
 
@@ -34,8 +37,10 @@ class _ArticlePageState extends State<ArticlePage>{
 
     _title = widget.data['title'] ?? '';
     _text = widget.data['text'] ?? '';
+    _filePath = widget.data['filePath']??'';
     favoriteTitleList = prefs.getStringList("favoriteTitleList")??[];
     favoriteTextList = prefs.getStringList("favoriteTextList")??[];
+    favoriteFilePathList = prefs.getStringList("favoriteFilePathList")??[];
     _isFavorite = favoriteTitleList.contains(_title);
 
     setState(() {});
@@ -66,6 +71,15 @@ class _ArticlePageState extends State<ArticlePage>{
                       ),
                     ),
                   ),
+                  if(_filePath.isNotEmpty)
+                    SizedBox(
+                      height: 200,
+                      width: 300,
+                      child: Image.file(File(_filePath),
+                        height: 200,
+                        width: 300,
+                        fit: BoxFit.cover,),
+                    ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: SizedBox(
@@ -97,14 +111,17 @@ class _ArticlePageState extends State<ArticlePage>{
                                         if (_isFavorite) {
                                           favoriteTitleList.add(_title);
                                           favoriteTextList.add(_text);
+                                          favoriteFilePathList.add(_filePath);
                                         }else{
                                           int remIndex = favoriteTitleList.indexOf(_title);
                                           favoriteTitleList.removeAt(remIndex);
                                           favoriteTextList.removeAt(remIndex);
+                                          favoriteFilePathList.removeAt(remIndex);
                                         }
                                         print(favoriteTitleList);
                                         prefs.setStringList("favoriteTitleList", favoriteTitleList);
                                         prefs.setStringList("favoriteTextList", favoriteTextList);
+                                        prefs.setStringList("favoriteFilePathList", favoriteFilePathList);
 
                                       });
                                     },

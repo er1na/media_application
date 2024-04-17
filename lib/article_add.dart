@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'file_picker_controller.dart';
+import 'dart:io';
 
 class ArticleAddPage extends StatefulWidget{
   @override
@@ -8,11 +10,14 @@ class ArticleAddPage extends StatefulWidget{
 
 class _ArticleAddPageState extends State<ArticleAddPage>{
 
+  final FilePickerController fileController = FilePickerController();
+
   String _title = "";
   String _text = "";
+  String _filePath = '';
 
   @override
-  Widget build(BuildContext context, ScopedReader watch){
+  Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
         title: Text("ArticleAdd"),
@@ -23,6 +28,32 @@ class _ArticleAddPageState extends State<ArticleAddPage>{
           alignment: Alignment.topCenter,
           child: Column(
             children: <Widget>[
+              if(_filePath.isNotEmpty)
+                SizedBox(
+                  height: 200,
+                  width: 300,
+                  child: Image.file(File(_filePath),
+                  height: 200,
+                  width: 300,
+                  fit: BoxFit.cover,),
+                ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: ElevatedButton(
+                    onPressed: () async{
+                     FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles(
+                       type:  FileType.any
+                     );
+                     if(filePickerResult != null){
+                       String filePath = filePickerResult.files.first.path!;
+                       _filePath = filePath;
+                       print(_filePath);
+                     }else{
+                       print("No image");
+                     }
+                    },
+                    child: Text("select image")),
+              ),
               TextField(
                 maxLength: 15,
                 enabled: true,
@@ -61,7 +92,7 @@ class _ArticleAddPageState extends State<ArticleAddPage>{
                   onPressed: (){
                     _title == "" && _text == ""
                     ?Navigator.of(context).pop()
-                    :Navigator.of(context).pop({'title': _title, 'text': _text});
+                    :Navigator.of(context).pop({'title': _title, 'text': _text, 'filePath': _filePath});
                   },
                   child: Text("Save"),
                 ),

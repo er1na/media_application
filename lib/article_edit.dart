@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class ArticleEditPage extends StatefulWidget {
 
@@ -13,12 +14,14 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
 
   String _title = "";
   String _text = "";
+  String _filePath = "";
 
   @override
   void initState() {
     super.initState();
     _title = widget.data['title']??'';
     _text = widget.data['text']??'';
+    _filePath = widget.data['filePath']??'';
   }
 
   @override
@@ -43,6 +46,32 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
           alignment: Alignment.topCenter,
           child: Column(
             children: <Widget>[
+              if(_filePath.isNotEmpty)
+                SizedBox(
+                  height: 200,
+                  width: 300,
+                  child: Image.file(File(_filePath),
+                    height: 200,
+                    width: 300,
+                    fit: BoxFit.cover,),
+                ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: ElevatedButton(
+                    onPressed: () async{
+                      FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles(
+                          type:  FileType.any
+                      );
+                      if(filePickerResult != null){
+                        String filePath = filePickerResult.files.first.path!;
+                        _filePath = filePath;
+                        print(_filePath);
+                      }else{
+                        print("No image");
+                      }
+                    },
+                    child: Text("select image")),
+              ),
               TextField(
                 maxLength: 15,
                 enabled: true,
@@ -81,7 +110,7 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop({"title": _title,"text": _text});
+                    Navigator.of(context).pop({"title": _title,"text": _text, "filePath": _filePath});
                   },
                   child: Text("Save"),
                 ),
@@ -91,7 +120,7 @@ class _ArticleEditPageState extends State<ArticleEditPage> {
                 width: double.infinity,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop({'title': _title, 'text': _text});
+                    Navigator.of(context).pop({'title': _title, 'text': _text, 'filePath': _filePath});
                   },
                   child: Text("Cancel"),
                 ),
